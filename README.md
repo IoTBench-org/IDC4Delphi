@@ -7,7 +7,7 @@
 <h1 align="center">IDC4Delphi</h1>
 
 <p align="center">
-  <strong>Industrial Direct Communications for **Delphi®** (IDC4Delphi)</strong> is an open-source initiative, part of the <a href="https://iotbench.org">IoTBench</a> project, aiming to bridge the gap between automation engineers and software developers. By providing a comprehensive set of tools and components, IDC4Delphi empowers the Industrial Internet of Things (IIoT) ecosystem to scale faster and more efficiently.
+  <strong>Industrial Direct Communications for Delphi® (IDC4Delphi)</strong> is an open-source initiative, part of the <a href="https://iotbench.org">IoTBench</a> project, aiming to bridge the gap between automation engineers and software developers. By providing a comprehensive set of tools and components, IDC4Delphi empowers the Industrial Internet of Things (IIoT) ecosystem to scale faster and more efficiently.
 </p>
 
 <p align="center">
