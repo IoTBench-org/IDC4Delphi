@@ -35,6 +35,7 @@ uses
    ,IDC.Protocols.KNX.Telegrams.Responses
    ,IDC.Protocols.KNX.Telegrams.Requests
    ,IDC.Protocols.KNX.Telegrams.IO
+   ,IDC.Protocols.KNX.Telegrams.Records
    ;
 
 type
@@ -53,10 +54,10 @@ type
                         );
 
   TKNXGroupAddressEvent = procedure(Driver: TIDCCustomKNXDriver;
-                                   DataType: TKNXDataTypes;
-                                   GroupValueType: TKNXGroupValueType;
-                                   const GroupAddress, IndividualAddress: string;
-                                   const AData: TIDCBytes) of object;
+                                    DataType: TKNXDataTypes;
+                                    GroupValueType: TKNXGroupValueType;
+                                    const GroupAddress, IndividualAddress: string;
+                                    const AData: TIDCBytes) of object;
 
   TKNXDeviceFoundEvent = procedure(Driver:  TIDCCustomKNXDriver;
                                    IPRouter: TKNXIPRouterDevice;
@@ -95,10 +96,12 @@ type
     FCurrentIPIndex:  Integer;
     FCurrentIPRouter:TKNXIPRouterDevice;
     FCurrentTunnelChannel:Word;
+    FInternalSendSequence:byte;
 
     /// Events
     FOnKNXDeviceFound: TKNXDeviceFoundEvent;
     FOnKNXDeviceConnected: TKNXDeviceConnectedEvent;
+    FOnKNXGroupAddressEvent: TKNXGroupAddressEvent;
 
     procedure OnKNXDiscoveryTimer;
     procedure SendKNXTelegram(Telegram:IKnxTelegram);
@@ -107,10 +110,13 @@ type
     // KNX Incoming Handlers
     procedure HandleIncoming_SearchResp(KnxResponse : TKnxTelegram_SearchResp);
     procedure HandleIncoming_ConnectResp(KnxResponse : TKnxTelegram_ConnectResp);
+    procedure HandleIncoming_TunnelAck(KnxResponse : TKnxTelegram_TunnelAck);
+    procedure HandleIncoming_TunnelReq(KnxRequest : TKnxTelegram_TunnelReq);
 
     // KNX Outgoing Handlers
     procedure HandleOutgoing_SearchRequest(const SenderIP:string);
     procedure HandleOutgoing_ConnectRequest(const SenderIP:string);
+    procedure HandleOutgoing_TunnelAck(Channel, Sequence, Status: TIDCByte);
 
   protected
     procedure SetActive(const Value: boolean); override;
@@ -118,13 +124,14 @@ type
   public
     procedure AfterConstruction; override;
     procedure BeforeDestruction; override;
-    procedure WriteBytesToGroupAddress(const DestAddress:string;
+    procedure WriteBytesToGroupAddress(const ADestAddress:string;
                                        const Value : TIDCBytes);
     procedure StartKNXDiscovery;
     procedure StopKNXDiscovery;
 
     property OnKNXDeviceFound: TKNXDeviceFoundEvent read FOnKNXDeviceFound write FOnKNXDeviceFound;
     property OnKNXDeviceConnected: TKNXDeviceConnectedEvent read FOnKNXDeviceConnected write FOnKNXDeviceConnected;
+    property OnKNXGroupAddressEvent: TKNXGroupAddressEvent read FOnKNXGroupAddressEvent write FOnKNXGroupAddressEvent;
   end;
 
   TIDCKNXDriver = class(TIDCCustomKNXDriver);
@@ -148,6 +155,7 @@ begin
   inherited;
   FCurrentIPIndex := -1;
   FCurrentIPRouter :=TKNXIPRouterDevice.Create;
+  FInternalSendSequence:=0;
 end;
 
 procedure TIDCCustomKNXDriver.BeforeDestruction;
@@ -196,10 +204,52 @@ begin
     HandleOutgoing_ConnectRequest(BindingIPs[FCurrentIPIndex]);
 end;
 
+procedure TIDCCustomKNXDriver.HandleIncoming_TunnelAck(
+  KnxResponse: TKnxTelegram_TunnelAck);
+begin
+  // ToDo
+end;
+
+procedure TIDCCustomKNXDriver.HandleIncoming_TunnelReq(
+  KnxRequest: TKnxTelegram_TunnelReq);
+var
+  DataType: TKNXDataTypes;
+  GroupValueType: TKNXGroupValueType;
+  Data: TIDCBytes;
+
+begin
+  if Assigned(OnKNXGroupAddressEvent) then
+  begin
+    case KnxRequest.Telegram.Section2.MessageCode of
+      KNX_cEMI_MESSAGE_CODE_L_DATA_REQ : DataType := knxDataRequest;
+      KNX_cEMI_MESSAGE_CODE_L_DATA_CON : DataType := knxDataConfirmation;
+      KNX_cEMI_MESSAGE_CODE_L_DATA_IND : DataType := knxDataIndication;
+    end;
+
+    case KnxRequest.ADPU.ValueType of
+      KNX_VALUE_TYPE_GROUP_VALUE_READ : GroupValueType := knxGroupRead;
+      KNX_VALUE_TYPE_GROUP_VALUE_RESPONSE : GroupValueType := knxGroupResponse;
+      KNX_VALUE_TYPE_GROUP_VALUE_WRITE : GroupValueType := knxGroupWrite;
+    end;
+
+    setlength(Data,1);
+    Data[0] := KnxRequest.ADPU.ValueAsByte;
+    OnKNXGroupAddressEvent(Self,DataType,GroupValueType,
+                           KnxRequest.Telegram.Section2.DestAddress.AsString,
+                           KnxRequest.Telegram.Section2.SrcAddress.AsString,
+                           Data);
+  end;
+  HandleOutgoing_TunnelAck(KnxRequest.Telegram.Section1.Channel,
+                           KnxRequest.Telegram.Section1.Sequence,
+                           KNX_STATUS_OK  );
+end;
+
 procedure TIDCCustomKNXDriver.OnKNXDiscoveryTimer;
 begin
   Inc(FCurrentIPIndex);
   if FCurrentIPIndex >= length(BindingIPs) then FCurrentIPIndex := 0;
+  RestartUDPServer;
+
   HandleOutgoing_SearchRequest(BindingIPs[FCurrentIPIndex]);
 end;
 
@@ -217,13 +267,13 @@ begin
 
       KNX_SERVICE_IDENTIFIER_CONNECT_RESPONSE :
         HandleIncoming_ConnectResp(TKnxTelegram_ConnectResp(KnxResponse));
-//
-//      KNX_SERVICE_IDENTIFIER_TUNNEL_ACK :
-//        Handle_TunnelAck(TKnxTelegram_TunnelAck(KnxResponse));
+
+      KNX_SERVICE_IDENTIFIER_TUNNEL_ACK :
+        HandleIncoming_TunnelAck(TKnxTelegram_TunnelAck(KnxResponse));
 //
 //      //////// Requests
-//      KNX_SERVICE_IDENTIFIER_TUNNEL_REQUEST :
-//        Handle_TunnelReq(TKnxTelegram_TunnelReq(KnxResponse));
+      KNX_SERVICE_IDENTIFIER_TUNNEL_REQUEST :
+        HandleIncoming_TunnelReq(TKnxTelegram_TunnelReq(KnxResponse));
     end;
   except
     on E: Exception do ;// ToDo
@@ -237,6 +287,15 @@ var
 begin
   KnxRequest := TKnxTelegram_SearchReq.CreateTelegram(SenderIP{Sender ip address},LocalPort {Sender udp port});
   SendKNXTelegram(KnxRequest);
+end;
+
+procedure TIDCCustomKNXDriver.HandleOutgoing_TunnelAck(Channel, Sequence,
+  Status: TIDCByte);
+var
+  KnxAck: IKnxTelegram;
+begin
+  KnxAck := TKnxTelegram_TunnelAck.CreateTelegram(Channel,Sequence,Status);
+  SendKNXTelegram(KnxAck);
 end;
 
 procedure TIDCCustomKNXDriver.HandleOutgoing_ConnectRequest(
@@ -285,10 +344,25 @@ begin
     FreeAndNil(FKNXDiscoveryTimer);
 end;
 
-procedure TIDCCustomKNXDriver.WriteBytesToGroupAddress(const DestAddress: string;
+procedure TIDCCustomKNXDriver.WriteBytesToGroupAddress(const ADestAddress: string;
   const Value: TIDCBytes);
+var
+  KnxRequest: IKnxTelegram;
+  SrcAddress: TKNXIndividualAddress;
+  DestAddress: TKNXGroupAddress;
 begin
+  SrcAddress.AsString := KNX_DEFAULT_INDIVIDUAL_ADDRESS;
+  DestAddress.AsString := ADestAddress;
+  inc(FInternalSendSequence);
+  KnxRequest := TKnxTelegram_TunnelReq.CreateTelegram(
+                                       FCurrentTunnelChannel,FInternalSendSequence,
+                                       KNX_cEMI_MESSAGE_CODE_L_DATA_REQ,
+                                       SrcAddress,DestAddress,
+                                       KNX_VALUE_TYPE_GROUP_VALUE_WRITE,
+                                       Value[0]);
 
+  if FInternalSendSequence>254 then FInternalSendSequence := 0;
+  SendKNXTelegram(KnxRequest);
 end;
 
 end.

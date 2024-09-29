@@ -125,7 +125,7 @@ class function TKnxTelegram_ConnectReq.CreateTelegram(const IPAddress: string;
 var _IPAddress: TIDCIPv4Addr;
 begin
   _IPAddress := StringToIPv4Addr(IPAddress);
-  Result := TKnxTelegram_SearchReq.CreateTelegram(_IPAddress,IPPort);
+  Result := TKnxTelegram_ConnectReq.CreateTelegram(_IPAddress,IPPort);
 
 end;
 

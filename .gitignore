@@ -79,3 +79,7 @@ __recovery/
 
 # Boss dependency manager vendor folder https://github.com/HashLoad/boss
 modules/
+.ignored/
+
+# Exculude sample prebuilt exes 
+!src/Examples/Bin/*.exe

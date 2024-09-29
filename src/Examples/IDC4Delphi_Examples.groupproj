@@ -1,0 +1,36 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{672D2B43-1C3C-4CCC-B9CA-71B2ED925C8D}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="KNX\Basic Functions\KNX_BasicFunctions.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="KNX_BasicFunctions">
+        <MSBuild Projects="KNX\Basic Functions\KNX_BasicFunctions.dproj"/>
+    </Target>
+    <Target Name="KNX_BasicFunctions:Clean">
+        <MSBuild Projects="KNX\Basic Functions\KNX_BasicFunctions.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="KNX_BasicFunctions:Make">
+        <MSBuild Projects="KNX\Basic Functions\KNX_BasicFunctions.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="KNX_BasicFunctions"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="KNX_BasicFunctions:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="KNX_BasicFunctions:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

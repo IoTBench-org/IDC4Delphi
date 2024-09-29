@@ -129,17 +129,10 @@ begin
   if not IsNormalMode then exit;
   FUDPServer := TIdUDPServer.Create(nil);
   FUDPServer.ThreadedEvent := True;
-  FUDPServer.BroadcastEnabled := True;
+  FUDPServer.BroadcastEnabled := False;
   FUDPServer.OnUDPRead := OnUDPRead;
   FBindingIPs := GetListLocalIPv4Address;
-  for I := 0 to length(FBindingIPs)-1 do
-  begin
-    with FUDPServer.Bindings.Add do
-    begin
-      IP := FBindingIPs[I];
-      Port := 0;
-    end;
-  end;
+
 end;
 
 procedure TIDCUDPDriverBase<TCO>.FreeMessagingThreadData(AData: PIDCUDPMessage);

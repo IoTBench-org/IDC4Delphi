@@ -244,11 +244,11 @@ procedure TIDCTimerThread.Execute;
 begin
   while not Terminated do
   begin
-    if not WaitForTimeout(FInterval) then
-      Break;
-
     if Assigned(FTaskProc) then
       FTaskProc;
+
+    if not WaitForTimeout(FInterval) then
+      Break;
   end;
 end;
 
