@@ -2,8 +2,8 @@ object frmMain: TfrmMain
   Left = 0
   Top = 0
   Caption = 'IDC4Delphi Samples - KNX Basic Functions'
-  ClientHeight = 647
-  ClientWidth = 776
+  ClientHeight = 625
+  ClientWidth = 825
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,7 +20,7 @@ object frmMain: TfrmMain
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 776
+    Width = 825
     Height = 94
     Align = alTop
     BevelKind = bkFlat
@@ -28,11 +28,12 @@ object frmMain: TfrmMain
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
+    ExplicitWidth = 776
     object Panel2: TPanel
       AlignWithMargins = True
-      Left = 192
+      Left = 198
       Top = 6
-      Width = 577
+      Width = 620
       Height = 81
       Margins.Left = 7
       Margins.Top = 6
@@ -49,7 +50,7 @@ object frmMain: TfrmMain
         AlignWithMargins = True
         Left = 3
         Top = 59
-        Width = 571
+        Width = 614
         Height = 18
         Margins.Top = 5
         Align = alTop
@@ -68,7 +69,7 @@ object frmMain: TfrmMain
       object lblIDC4Delphi: TLabel
         Left = 0
         Top = 0
-        Width = 577
+        Width = 620
         Height = 35
         Cursor = crHandPoint
         Hint = 'https://github.com/IoTBench-org/IDC4Delphi'
@@ -87,7 +88,7 @@ object frmMain: TfrmMain
       object Label3: TLabel
         Left = 0
         Top = 35
-        Width = 577
+        Width = 620
         Height = 19
         Align = alTop
         Alignment = taCenter
@@ -100,27 +101,27 @@ object frmMain: TfrmMain
         ParentFont = False
         ExplicitLeft = -1
         ExplicitTop = 34
+        ExplicitWidth = 577
       end
     end
     object Panel3: TPanel
       Left = 0
       Top = 0
-      Width = 185
+      Width = 191
       Height = 90
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitLeft = 296
-      ExplicitTop = 24
-      ExplicitHeight = 41
       object imgIoTBenchLogo: TImage
         Left = 0
         Top = 0
-        Width = 185
+        Width = 191
         Height = 74
         Cursor = crHandPoint
         Hint = 'https://iotbench.org'
         Align = alClient
+        Center = True
+        IncrementalDisplay = True
         Picture.Data = {
           0954506E67496D61676589504E470D0A1A0A0000000D49484452000000980000
           004B08060000008C684EA000000009704859730000090700000907012268CE87
@@ -304,15 +305,17 @@ object frmMain: TfrmMain
           90C384D2B7751C7D635D7AB2F62FCD7BE036B89D60624C4B4EEEE1D5E2DBBB85
           87269D7FCB2FB92929B5EE96C903FB704911CC83FF7FF80F71AC8F1EB3120B69
           0000000049454E44AE426082}
+        Proportional = True
         OnClick = imgIoTBenchLogoClick
         ExplicitLeft = 1
         ExplicitTop = -6
+        ExplicitWidth = 185
         ExplicitHeight = 76
       end
       object lblSlogan: TLabel
         Left = 0
         Top = 74
-        Width = 185
+        Width = 191
         Height = 16
         Align = alBottom
         Alignment = taCenter
@@ -323,15 +326,16 @@ object frmMain: TfrmMain
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
-        ExplicitTop = 76
-        ExplicitWidth = 176
+        ExplicitLeft = 4
+        ExplicitTop = 70
+        ExplicitWidth = 185
       end
     end
   end
   object Panel4: TPanel
     Left = 0
     Top = 94
-    Width = 776
+    Width = 825
     Height = 37
     Align = alTop
     BevelOuter = bvNone
@@ -340,13 +344,16 @@ object frmMain: TfrmMain
     TabOrder = 1
     ExplicitLeft = -64
     ExplicitTop = 59
+    ExplicitWidth = 776
     object Image1: TImage
-      Left = 740
+      Left = 789
       Top = 0
       Width = 36
       Height = 37
       Cursor = crHandPoint
-      Hint = 'https://docs.iotbench.org/v/idc4delphi'
+      Hint = 
+        'https://docs.iotbench.org/idc4delphi/prebuilt-demos#knx-basic-fu' +
+        'nctions'
       Align = alRight
       Center = True
       Picture.Data = {
@@ -366,12 +373,14 @@ object frmMain: TfrmMain
     end
     object Label2: TLabel
       AlignWithMargins = True
-      Left = 591
+      Left = 640
       Top = 5
       Width = 146
       Height = 29
       Cursor = crHandPoint
-      Hint = 'https://docs.iotbench.org/v/idc4delphi'
+      Hint = 
+        'https://docs.iotbench.org/idc4delphi/prebuilt-demos#knx-basic-fu' +
+        'nctions'
       Margins.Top = 5
       Align = alRight
       Alignment = taRightJustify
@@ -384,14 +393,15 @@ object frmMain: TfrmMain
       ParentFont = False
       Layout = tlCenter
       OnClick = imgIoTBenchLogoClick
+      ExplicitLeft = 591
       ExplicitHeight = 16
     end
   end
   object pnlMainContent: TPanel
     Left = 0
     Top = 131
-    Width = 776
-    Height = 497
+    Width = 825
+    Height = 475
     Align = alClient
     BevelOuter = bvNone
     Padding.Left = 5
@@ -402,10 +412,12 @@ object frmMain: TfrmMain
     ParentColor = True
     TabOrder = 2
     ExplicitTop = 134
+    ExplicitWidth = 776
+    ExplicitHeight = 497
     object memLogs: TMemo
       Left = 5
       Top = 27
-      Width = 766
+      Width = 815
       Height = 289
       Align = alTop
       ReadOnly = True
@@ -413,18 +425,20 @@ object frmMain: TfrmMain
       TabOrder = 0
       WordWrap = False
       ExplicitTop = 23
+      ExplicitWidth = 766
     end
     object Panel5: TPanel
       Left = 5
       Top = 5
-      Width = 766
+      Width = 815
       Height = 22
       Align = alTop
       BevelOuter = bvNone
       Padding.Right = 5
       TabOrder = 1
+      ExplicitWidth = 766
       object btnClearLog: TButton
-        Left = 683
+        Left = 732
         Top = 0
         Width = 78
         Height = 22
@@ -440,11 +454,12 @@ object frmMain: TfrmMain
       Left = 8
       Top = 319
       Width = 260
-      Height = 170
+      Height = 148
       Align = alLeft
       TabOrder = 2
       ExplicitLeft = 5
       ExplicitTop = 321
+      ExplicitHeight = 170
       object Label1: TLabel
         AlignWithMargins = True
         Left = 5
@@ -510,11 +525,12 @@ object frmMain: TfrmMain
       Left = 274
       Top = 319
       Width = 260
-      Height = 170
+      Height = 148
       Align = alLeft
       TabOrder = 3
       ExplicitLeft = 516
       ExplicitTop = 311
+      ExplicitHeight = 170
       object Label5: TLabel
         AlignWithMargins = True
         Left = 5
@@ -532,8 +548,8 @@ object frmMain: TfrmMain
         Width = 250
         Height = 13
         Align = alTop
-        Caption = 'Write To Group Address:'
-        ExplicitWidth = 119
+        Caption = 'Group Address:'
+        ExplicitWidth = 75
       end
       object edtSendValueByte: TEdit
         AlignWithMargins = True
@@ -565,15 +581,24 @@ object frmMain: TfrmMain
         TabOrder = 2
         OnClick = btnWriteKNXClick
       end
+      object btnReadKNX: TButton
+        Left = 6
+        Top = 110
+        Width = 89
+        Height = 25
+        Caption = 'Read from KNX'
+        TabOrder = 3
+        OnClick = btnReadKNXClick
+      end
     end
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 628
-    Width = 776
+    Top = 606
+    Width = 825
     Height = 19
     Panels = <>
     SimplePanel = True
-    ExplicitTop = 486
+    ExplicitWidth = 710
   end
 end

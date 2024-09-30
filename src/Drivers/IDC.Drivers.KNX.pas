@@ -19,6 +19,9 @@
   License:
     * This project is open-source and free to use. You are encouraged to
       contribute, modify, and redistribute it under the MIT license.
+
+  Unit Online Documentation
+  https://docs.iotbench.org/idc4delphi/code-ref/drivers-components/TIDCKNXDriver
 }
 
 unit IDC.Drivers.KNX;
@@ -124,8 +127,12 @@ type
   public
     procedure AfterConstruction; override;
     procedure BeforeDestruction; override;
+
+    procedure ReadBytesFromGroupAddress(const ADestAddress:string);
+
     procedure WriteBytesToGroupAddress(const ADestAddress:string;
                                        const Value : TIDCBytes);
+
     procedure StartKNXDiscovery;
     procedure StopKNXDiscovery;
 
@@ -279,6 +286,27 @@ begin
     on E: Exception do ;// ToDo
   end;
 
+end;
+
+procedure TIDCCustomKNXDriver.ReadBytesFromGroupAddress(
+  const ADestAddress: string);
+var
+  KnxRequest: IKnxTelegram;
+  SrcAddress: TKNXIndividualAddress;
+  DestAddress: TKNXGroupAddress;
+begin
+  SrcAddress.AsString := KNX_DEFAULT_INDIVIDUAL_ADDRESS;
+  DestAddress.AsString := ADestAddress;
+  inc(FInternalSendSequence);
+  KnxRequest := TKnxTelegram_TunnelReq.CreateTelegram(
+                                       FCurrentTunnelChannel,FInternalSendSequence,
+                                       KNX_cEMI_MESSAGE_CODE_L_DATA_REQ,
+                                       SrcAddress,DestAddress,
+                                       KNX_VALUE_TYPE_GROUP_VALUE_READ,
+                                       0);
+
+  if FInternalSendSequence>254 then FInternalSendSequence := 0;
+  SendKNXTelegram(KnxRequest);
 end;
 
 procedure TIDCCustomKNXDriver.HandleOutgoing_SearchRequest(const SenderIP:string);

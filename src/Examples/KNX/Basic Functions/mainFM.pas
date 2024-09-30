@@ -43,6 +43,7 @@ type
     edtSendValueByte: TEdit;
     edtDestAddr: TEdit;
     btnWriteKNX: TButton;
+    btnReadKNX: TButton;
     procedure imgIoTBenchLogoClick(Sender: TObject);
     procedure btnClearLogClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -63,6 +64,7 @@ type
                                   const GroupAddress, IndividualAddress: string;
                                   const AData: TIDCBytes);
     procedure btnWriteKNXClick(Sender: TObject);
+    procedure btnReadKNXClick(Sender: TObject);
   private
     FKNX: TIDCKNXDriver;
     procedure AddLog(LogType:TLogType;const Str:string);
@@ -99,6 +101,13 @@ end;
 procedure TfrmMain.btnClearLogClick(Sender: TObject);
 begin
   memLogs.Clear;
+end;
+
+procedure TfrmMain.btnReadKNXClick(Sender: TObject);
+begin
+  if not Assigned(FKNX) then exit;
+  FKNX.ReadBytesFromGroupAddress(edtDestAddr.Text);
+
 end;
 
 procedure TfrmMain.btnWriteKNXClick(Sender: TObject);
